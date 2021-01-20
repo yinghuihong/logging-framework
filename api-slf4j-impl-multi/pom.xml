@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>logging-framework</artifactId>
+        <groupId>org.example</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>api-slf4j-impl-multi</artifactId>
+
+    <dependencies>
+        <!-- slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.28</version>
+        </dependency>
+
+        <!-- 以下为 slf4j 的多种实现，包中均定义了类 org.slf4j.impl.StaticLoggerBinder http://www.slf4j.org/codes.html#StaticLoggerBinder -->
+        <!-- 运行时 slf4j-api？ load class org.slf4j.impl.StaticLoggerBinder -->
+        <!-- 当有多个StaticLoggerBinder实现类，同时存在于 class path，默认采用先加载到的 -->
+
+        <!-- slf4j impl no operation 吞噬掉日志 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.28</version>
+        </dependency>
+        <!-- slf4j impl 简单的日志输出 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.28</version>
+        </dependency>
+    </dependencies>
+</project>

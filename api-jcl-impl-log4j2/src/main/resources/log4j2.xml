@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- status表示log4j2本身的日志信息打印级别，和下面的level，不是一个概念 -->
+<!--TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF-->
+<Configuration status="OFF" monitorInterval="300">
+    <Properties>
+        <Property name="spring.application.name">
+            api-jcl-impl-log4j2
+        </Property>
+
+        <!--[时间] [日志级别] [追踪ID] [应用名称，指定] [线程ID] [线程名称] 日志logger：信息-->
+        <Property name="LOG_PATTERN">
+            [%d{yyyy-MM-dd HH:mm:ss.SSS}][%level][%t-%T] %-50c{-3}(%L): %m%n
+        </Property>
+        <Property name="LOG_FILE_PATH">logs/${spring.application.name}</Property>
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout charset="UTF-8" pattern="${LOG_PATTERN}"/>
+        </Console>
+        <!-- 这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
+        <!--        <RollingFile name="RollingFile" fileName="${LOG_FILE_PATH}/app.log"-->
+        <!--                      filePattern="${LOG_FILE_PATH}/%d{yyyy-MM}/app_%d{yyyy-MM-dd}.log">-->
+        <RollingFile name="RollingFile" fileName="${LOG_FILE_PATH}/app.log"
+                     filePattern="${LOG_FILE_PATH}/app_%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <Charset>UTF-8</Charset>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- <SizeBasedTriggeringPolicy size="10MB"/>  -->
+                <!-- 每天创建一个日志文件 -->
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+
+            <DefaultRolloverStrategy>
+                <Delete basePath="${LOG_FILE_PATH}" maxDepth="2">
+                    <IfFileName glob="app_*.log"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!--过滤掉spring和hibernate的一些无用的debug信息-->
+        <logger name="org.springframework" level="INFO"/>
+
+        <!-- 将业务日志打印 -->
+        <logger name="org.org.example.Main" level="INFO" additivity="false">
+            <appender-ref ref="ConsoleAppender"/>
+            <appender-ref ref="RollingFile"/>
+        </logger>
+
+        <!-- All < Trace < Debug < Info < Warn < Error < Fatal < OFF. -->
+        <!-- 程序会打印高于或等于所设置级别的日志，设置的日志等级越高，打印出来的日志就越少。-->
+        <!-- 此level设置的日志级别，是过滤项目中输出的日志信息，和ThresholdFilter的level有所区别 -->
+        <Root level="Debug">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
